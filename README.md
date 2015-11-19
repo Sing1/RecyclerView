@@ -26,4 +26,50 @@
                 textView = (TextView) itemView.findViewById(R.id.text);
             }
         }
+    
+    4)关于实现的三个方法
+        
+        private List<String> list;
+        private LayoutInflater inflater;
+
+        public MyAdapter(List<String> list) {
+            this.list = list;
+        }
+
+        @Override
+        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            inflater = LayoutInflater.from(parent.getContext());
+            View view = inflater.inflate(R.layout.item,parent,false);
+            return new ViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(ViewHolder holder, int position) {
+            holder.textView.setText(list.get(position));
+        }
+
+        @Override
+        public int getItemCount() {
+            return list.size();
+        }
+ 
+       所用的item的代码也贴出来吧  R.layout.item.xml
+ 
+        <?xml version="1.0" encoding="utf-8"?>
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#123123"> 
+            
+            <TextView
+                android:id="@+id/text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="1"
+                android:textColor="#fff"
+                android:textSize="20dp" />
+
+        </LinearLayout>
       
