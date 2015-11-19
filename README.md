@@ -72,4 +72,96 @@
                 android:textSize="20dp" />
 
         </LinearLayout>
-      
+    
+    到这里adapter基本差不多完了。
+
+4、activity中的使用
+
+    private RecyclerView recyclerView;
+    private List<String> list = new ArrayList<String>();
+    private MyAdapter adapter;
+     
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main); 
+        
+        init();//添加list的数据 
+        
+        recyclerView = (RecyclerView) this.findViewById(R.id.recyclerView);
+        adapter = new MyAdapter(list);
+        
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));//必须有 
+        //recyclerView.setLayoutManager(new StaggeredGridLayoutManager(StaggeredGridLayoutManager.HORIZONTAL,3));
+        //recyclerView.setLayoutManager(new GridLayoutManager(this,2));
+    }
+
+5、关于装饰器的添加
+
+    recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST));
+    
+    下载地址：http://pan.baidu.com/s/1mg4IdZy
+    
+6、关于事件的点击
+    
+    点击事件也是比较灵活，自己随便定义，接口类型
+    interface onItemClickListener{
+        void onClick(View v, int position, String a);
+    }
+    
+    在adapter里定义，并提供set方法
+    private onItemClickListener onItemClickListener;
+    
+    public void setOnItemClickListener(MyAdapter.onItemClickListener onItemClickListener) {
+        this.onItemClickListener = onItemClickListener;
+    }
+    
+    在ViewHolder里进行绑定
+    class ViewHolder extends RecyclerView.ViewHolder {
+    
+        private TextView textView;
+        public ViewHolder(View itemView) {
+            super(itemView);
+            textView = (TextView) itemView.findViewById(R.id.text);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (onItemClickListener != null){
+                        onItemClickListener.onClick(v,getLayoutPosition(),list.get(getLayoutPosition()));
+                    }
+                }
+            });
+        }
+    }
+    
+    然后在activity中进行调用:
+    adapter.setOnItemClickListener(new MyAdapter.onItemClickListener() {
+        @Override
+        public void onClick(View v, int position, String a) {
+            Toast.makeText(MainActivity.this, "点击了第" + position + "位置，值是" + a, Toast.LENGTH_LONG).show();
+        }
+    });
+    
+7、数据的增加、删除和刷新
+    在这里， notifyDataSetChanged();的方法不再建议使用，推荐单条刷新。
+    
+    public void add(int position,String a){
+        if (list != null){
+            list.add(position,a);
+            notifyItemInserted(position);
+        }
+    }
+
+    public void remove(int position){
+        if (list != null && list.size() > 0 ){
+            list.remove(position);
+            notifyItemRemoved(position);
+        }
+    }
+    
+到这里基本上就写完了。
+
+    
+
